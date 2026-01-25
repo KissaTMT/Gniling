@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class InputHandler : IDisposable
@@ -25,6 +26,7 @@ public class InputHandler : IDisposable
     }
     private void PointPositionHandler(InputAction.CallbackContext context)
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
         var pointWorldPosition = _main.ScreenToWorldPoint(_inputActions.Player.Position.ReadValue<Vector2>());
 
         OnGetPosition?.Invoke(new Vector3(pointWorldPosition.x, pointWorldPosition.y, pointWorldPosition.y));

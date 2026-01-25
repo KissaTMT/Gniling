@@ -1,41 +1,30 @@
-﻿using System;
-using System.Diagnostics;
-using UnityEngine;
+﻿using UnityEngine;
+using Zenject;
 
 public class Player : MonoBehaviour
 {
-    public static Player instance;
-    public Vector3 CurrentPoint => _currentPoint;
-    public Vector3 MovementDirection => _movementDirection;
+    public Gniling Gniling => _gniling;
 
-    [SerializeField] private float _movementSpeed;
-    private Transform _transform;
-    private Transform _root;
     private Vector3 _currentPoint;
-    private Vector3 _movementDirection;
 
     private InputHandler _input;
-   
 
-    private void Awake()
+    private Gniling _gniling;
+
+    [Inject]
+    public void Construct(InputHandler input)
     {
-        instance = this;
-        Application.targetFrameRate = 120;
-
-        _transform = GetComponent<Transform>();
-        _root = _transform.GetChild(0);
-        _input = new InputHandler();
-
-        _currentPoint = _transform.position;
-    }
-    private void OnEnable()
-    {
+        _input = input;
         _input.OnGetPosition += SetCurrentPoint;
+    }
+    public void Init()
+    {
+        _gniling = GetComponent<Gniling>();
+        _gniling.Init();
     }
     private void OnDisable()
     {
         _input.OnGetPosition -= SetCurrentPoint;
-
         _input.Dispose();
     }
     private void SetCurrentPoint(Vector3 point)
@@ -45,21 +34,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        CalculateDirection();
-        Move();
-        Flip(_movementDirection.x);
+        _gniling.SetMovementDirection(CalculateDirection());
+        _gniling.Tick();
     }
-    private void CalculateDirection()
+    private Vector3 CalculateDirection()
     {
-        var delta = _currentPoint - _transform.position;
-        _movementDirection = delta.sqrMagnitude > 1 ? delta.normalized : delta;
-    }
-    private void Move()
-    {
-        _transform.position += _movementDirection * _movementSpeed * Time.deltaTime;
-    }
-    private void Flip(float sign)
-    {
-        _root.localScale = new Vector3(Mathf.Sign(sign) * Mathf.Abs(_root.localScale.x), _root.localScale.y, _root.localScale.z);
+        var delta = _currentPoint - _gniling.Transform.position;
+        return delta.sqrMagnitude > 1 ? delta.normalized : delta;
     }
 }
