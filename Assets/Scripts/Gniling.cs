@@ -40,7 +40,6 @@ public class Gniling : MonoBehaviour
 
         GetHungry(0.005f);
         GetTired(0.005f);
-        GetJoy(0.005f);
     }
     public void SetMovementDirection(Vector3 direction)
     {
@@ -140,6 +139,10 @@ public class Gniling : MonoBehaviour
                     break;
             }
             Destroy(collision.gameObject);
+        }
+        if(collision.TryGetComponent(out Willson willson)){
+            willson.AddForce(((_movementDirection != Vector3.zero) ? _movementDirection : new Vector3(Random.Range(0f,1f),Random.Range(0f,1f)).normalized));
+            _statsRepository.GetStat(Stats.JOY).Add(0.05f);
         }
     }
 }

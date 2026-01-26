@@ -5,7 +5,7 @@ public class Player : MonoBehaviour
 {
     public Gniling Gniling => _gniling;
 
-    private Vector3 _currentPoint;
+    private Vector2 _currentPoint;
 
     private InputHandler _input;
 
@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
         _input.OnGetPosition -= SetCurrentPoint;
         _input.Dispose();
     }
-    private void SetCurrentPoint(Vector3 point)
+    private void SetCurrentPoint(Vector2 point)
     {
         _currentPoint = point;
     }
@@ -37,9 +37,9 @@ public class Player : MonoBehaviour
         _gniling.SetMovementDirection(CalculateDirection());
         _gniling.Tick();
     }
-    private Vector3 CalculateDirection()
+    private Vector2 CalculateDirection()
     {
-        var delta = _currentPoint - _gniling.Transform.position;
+        var delta = _currentPoint - (Vector2)_gniling.Transform.position;
         return delta.sqrMagnitude > 1 ? delta.normalized : delta;
     }
 }

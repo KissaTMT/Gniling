@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class InputHandler : IDisposable
 {
-    public event Action<Vector3> OnGetPosition;
+    public event Action<Vector2> OnGetPosition;
 
     private InputSystem_Actions _inputActions;
     private Camera _main;
@@ -29,6 +29,6 @@ public class InputHandler : IDisposable
         if (EventSystem.current.IsPointerOverGameObject()) return;
         var pointWorldPosition = _main.ScreenToWorldPoint(_inputActions.Player.Position.ReadValue<Vector2>());
 
-        OnGetPosition?.Invoke(new Vector3(pointWorldPosition.x, pointWorldPosition.y, pointWorldPosition.y));
+        OnGetPosition?.Invoke(pointWorldPosition);
     }
 }
