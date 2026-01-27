@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Zenject;
 
-public class Player : MonoBehaviour
+public class PlayerGnilingBrian : MonoBehaviour
 {
     public Gniling Gniling => _gniling;
 
