@@ -7,7 +7,7 @@ public class Mushroom : MonoBehaviour
     [SerializeField] private MushroomEffectType _type;
     private Transform _transform;
 
-    private void Awake()
+    public void Init()
     {
         _transform = GetComponent<Transform>();
     }
@@ -15,5 +15,6 @@ public class Mushroom : MonoBehaviour
 public enum MushroomEffectType
 {
     Simple,
-    Hallucinogenic
+    Joyful,
+    Sad
 }

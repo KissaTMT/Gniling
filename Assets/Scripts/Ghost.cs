@@ -33,4 +33,8 @@ public class Ghost : MonoBehaviour
     {
         _root.localScale = new Vector3(Mathf.Sign(sign) * Mathf.Abs(_root.localScale.x), _root.localScale.y, _root.localScale.z);
     }
+    public void Attack(Gniling gniling)
+    {
+        gniling.StatsRepository.GetStat(Stats.PHYSICAL_HELATH).Reduce(0.1f * Time.deltaTime);
+    }
 }

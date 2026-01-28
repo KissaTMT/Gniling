@@ -7,7 +7,7 @@ public class Willson : MonoBehaviour
     private Rigidbody2D _rb;
     private float _addedForce;
     private Vector3 _currentDirection;
-    public void Awake()
+    public void Init()
     {
         _transform = GetComponent<Transform>();
         _root = _transform.GetChild(0);
@@ -29,6 +29,6 @@ public class Willson : MonoBehaviour
     }
     private void Rotate()
     {
-        _root.Rotate(0, 0, -16 * _rb.linearVelocity.magnitude * Time.deltaTime);
+        _root.Rotate(0, 0, Mathf.Sign(-_rb.linearVelocity.x)-32 * _rb.linearVelocity.magnitude * Time.deltaTime);
     }
 }

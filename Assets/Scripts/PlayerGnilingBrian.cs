@@ -11,25 +11,27 @@ public class PlayerGnilingBrian : MonoBehaviour
 
     private Gniling _gniling;
 
+    private Camera _main;
+
     [Inject]
     public void Construct(InputHandler input)
     {
         _input = input;
-        _input.OnGetPosition += SetCurrentPoint;
+        _input.OnGetScreenPosition += SetCurrentPoint;
     }
     public void Init()
     {
         _gniling = GetComponent<Gniling>();
         _gniling.Init();
+        _main = Camera.main;
     }
     private void OnDisable()
     {
-        _input.OnGetPosition -= SetCurrentPoint;
-        _input.Dispose();
+        _input.OnGetScreenPosition -= SetCurrentPoint;
     }
     private void SetCurrentPoint(Vector2 point)
     {
-        _currentPoint = point;
+        _currentPoint = _main.ScreenToWorldPoint(point);
     }
 
     private void Update()

@@ -37,6 +37,8 @@ public class AIGhostBrain : MonoBehaviour
     {
         _ghost.SetMovementDirection(CalculateDirection());
         _ghost.Tick();
+        if (_behaviour == Behaviour.Passive) return;
+        if ((_ghost.Transform.position - _gniling.Transform.position).sqrMagnitude < 4) _ghost.Attack(_gniling);
     }
     private void OnDisable()
     {

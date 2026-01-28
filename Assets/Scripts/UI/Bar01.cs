@@ -25,9 +25,14 @@ public class Bar01 : MonoBehaviour
     }
     private void ChangeBar(float oldValue, float newValue)
     {
-        if (Mathf.Abs(_oldValue - newValue) < 0.05f) return;
-        StartCoroutine(ChangeBarRoutine(oldValue,newValue));
-        _oldValue = newValue;
+        //if (Mathf.Abs(_oldValue - newValue) < 0.05f) return;
+        //StartCoroutine(ChangeBarRoutine(oldValue,newValue));
+        //_oldValue = newValue;
+
+        _bar.fillAmount = newValue;
+
+        if (newValue > 1) _bar.color = Color.red;
+        else _bar.color = Color.white;
     }
     private IEnumerator ChangeBarRoutine(float oldValue, float newValue)
     {
