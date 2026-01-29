@@ -9,12 +9,13 @@ public class Bar01 : MonoBehaviour
     [SerializeField] private float _changeSpeed = 0.5f;
 
     private ReactProp<float> _currentValue;
-    private float _oldValue;
+    private Color _colorBase;
+
     public void Init(ReactProp<float> react)
     {
         _currentValue = react;
         _currentValue.OnChanged += ChangeBar;
-        _oldValue = _currentValue.Value;
+        _colorBase = _bar.color;
 
         _bar.fillAmount = _currentValue.Value;
     }
@@ -31,19 +32,19 @@ public class Bar01 : MonoBehaviour
 
         _bar.fillAmount = newValue;
 
-        if (newValue > 1) _bar.color = Color.red;
-        else _bar.color = Color.white;
+        if (newValue > 1) _bar.color = _colorBase * Color.red;
+        else _bar.color = _colorBase;
     }
-    private IEnumerator ChangeBarRoutine(float oldValue, float newValue)
-    {
-        for (var i = 0f; i < 1; i += _changeSpeed * Time.deltaTime)
-        {
-            _bar.fillAmount = Mathf.Lerp(_oldValue, newValue, i);
-            yield return null;
-        }
-        _bar.fillAmount = newValue;
-
-        if (newValue > 1) _bar.color = Color.red;
-        else _bar.color = Color.white;
-    }
+    //private IEnumerator ChangeBarRoutine(float oldValue, float newValue)
+    //{
+    //    for (var i = 0f; i < 1; i += _changeSpeed * Time.deltaTime)
+    //    {
+    //        _bar.fillAmount = Mathf.Lerp(_oldValue, newValue, i);
+    //        yield return null;
+    //    }
+    //    _bar.fillAmount = newValue;
+    //
+    //    if (newValue > 1) _bar.color = Color.red;
+    //    else _bar.color = Color.white;
+    //}
 }
