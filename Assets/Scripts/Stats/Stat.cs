@@ -16,7 +16,7 @@ public class Stat
     }
     public void Add(float value) => Change(value);
     public void Reduce(float value) => Change(-value);
-    protected virtual void Change(float value)
+    public virtual void Change(float value)
     {
         Current.Value = Mathf.Max(0, Current.Value + value);
     }

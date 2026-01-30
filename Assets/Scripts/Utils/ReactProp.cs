@@ -11,10 +11,13 @@ public class ReactProp<T>
             return _value;
         }
         set {
-            if(_comparer.Equals(_value, value) == false)
+            var old = _value;
+
+            _value = value;
+
+            if(_comparer.Equals(_value, old) == false)
             {
-                OnChanged?.Invoke(_value, value);
-                _value = value;
+                OnChanged?.Invoke(old, _value);
             }
         }
     }

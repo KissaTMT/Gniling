@@ -17,7 +17,7 @@ public class AIGhostBrain : MonoBehaviour
     public void Construct(PlayerGnilingBrian player)
     {
         _gniling = player.Gniling;
-        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HELATH).Current.OnChanged += SetBehaviour;
+        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current.OnChanged += SetBehaviour;
     }
 
     private void SetBehaviour(float arg1, float arg2)
@@ -42,7 +42,7 @@ public class AIGhostBrain : MonoBehaviour
     }
     private void OnDisable()
     {
-        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HELATH).Current.OnChanged -= SetBehaviour;
+        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current.OnChanged -= SetBehaviour;
     }
     private IEnumerator SetPointRoutine()
     {

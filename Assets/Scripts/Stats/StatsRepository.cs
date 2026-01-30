@@ -20,4 +20,9 @@ public class StatsRepository
         if(_statsMap.TryGetValue(statName, out Stat stat)) return stat;
         else return null;
     }
+    public int IsOutOfRange(string statName)
+    {
+        if (_statsMap.TryGetValue(statName, out Stat stat)) return stat.Current.Value <= 0 || stat.Current.Value > 1 ? 1 : 0;
+        return -1;
+    }
 }

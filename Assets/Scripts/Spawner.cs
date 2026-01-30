@@ -5,9 +5,7 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] private Ghost _ghostPrefab;
     [SerializeField] private Willson _willsonPrefab;
-    [SerializeField] private Mushroom _edibleMushroomPrefab;
-    [SerializeField] private Mushroom _joyfulMushroomPrefab;
-    [SerializeField] private Mushroom _sadMushroomPrefab;
+    [SerializeField] private Mushroom[] _mushrooms;
     private Gniling _gniling;
     private Ghost _ghost;
     private Willson _willson;
@@ -20,8 +18,8 @@ public class Spawner : MonoBehaviour
         _gniling = player.Gniling;
         _di = di;
 
-        _gniling.OnRise += WaterDrop;
-        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HELATH).Current.OnChanged += SpawnGhostHanlder;
+        _gniling.OnRise += OnRiseHandler;
+        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current.OnChanged += SpawnGhostHanlder;
     }
 
     public Ghost SpawnGhost()
@@ -35,35 +33,33 @@ public class Spawner : MonoBehaviour
         _ghost = ghost.GetComponent<Ghost>();
         return _ghost;
     }
-    public Mushroom SpawnEdibleMushroom()
-    {
-        return Instantiate(_edibleMushroomPrefab, new Vector2(Random.Range(-15f, 15f), 5), Quaternion.identity);
-    }
-    public Mushroom SpawnJoyfulMushroom()
-    {
-        return Instantiate(_joyfulMushroomPrefab, new Vector2(Random.Range(-15f, 15f), 5), Quaternion.identity);
-    }
-    public Mushroom SpawnSadMushroom()
-    {
-        return Instantiate(_sadMushroomPrefab, new Vector2(Random.Range(-15f, 15f), 5), Quaternion.identity);
-    }
     public Willson SpawnWillson()
     {
-        _willson = Instantiate(_willsonPrefab, new Vector2(Random.Range(-15f, 15f), 5), Quaternion.identity);
+        _willson = Instantiate(_willsonPrefab, Vector2.right * 2, Quaternion.identity);
         _willson.Init();
         return _willson;
     }
+    private void MusshromsDrop()
+    {
+        for (var i = 0; i < _mushrooms.Length; i++)
+        {
+            var item = _mushrooms[i];
+            if (Random.value > item.GetDropProbability()) item.Drop();
+        }
+    }
+    private void OnRiseHandler()
+    {
+        WaterDrop();
+        _willson.Transform.position = Vector2.right * 2;
+    }
     private void WaterDrop()
     {
-        var rnd = Random.value;
-        if (rnd < 0.2f) SpawnEdibleMushroom();
-        else if(rnd >= 0.2f && rnd < 0.6f) SpawnJoyfulMushroom();
-        else SpawnSadMushroom();
+        MusshromsDrop();
     }
     private void OnDisable()
     {
-        _gniling.OnRise -= WaterDrop;
-        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HELATH).Current.OnChanged -= SpawnGhostHanlder;
+        _gniling.OnRise -= OnRiseHandler;
+        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current.OnChanged -= SpawnGhostHanlder;
     }
     private void SpawnGhostHanlder(float oldV, float newV)
     {

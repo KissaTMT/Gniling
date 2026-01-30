@@ -6,11 +6,12 @@ public class GameSceneInstaller : MonoInstaller
     [SerializeField] private Gniling _gnilingPrefab;
     [SerializeField] private Spawner _spawner;
     [SerializeField] private GameOverHolder _gameOverHolder;
-    [SerializeField] private Bar01 _health;
-    [SerializeField] private Bar01 _psych;
-    [SerializeField] private Bar01 _sleep;
-    [SerializeField] private Bar01 _joy;
-    [SerializeField] private Bar01 _saturation;
+    [SerializeField] private PauseHolder _pauseHolder;
+    [SerializeField] private ProgressBar _health;
+    [SerializeField] private ProgressBar _psych;
+    [SerializeField] private ProgressBar _sleep;
+    [SerializeField] private ProgressBar _joy;
+    [SerializeField] private ProgressBar _saturation;
     public override void InstallBindings()
     {
         var player = PlayerBinding();
@@ -19,9 +20,9 @@ public class GameSceneInstaller : MonoInstaller
 
         SpawnerSetup();
 
-        GameOverSetup();
+        PauseSetup();
 
-        Debug.Log("Bind");
+        GameOverSetup();
     }
 
     private PlayerGnilingBrian PlayerBinding()
@@ -35,8 +36,8 @@ public class GameSceneInstaller : MonoInstaller
     }
     private void ProgressBarsSetup(PlayerGnilingBrian playerGnilingBrain)
     {
-        _health.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.PHYSICAL_HELATH).Current);
-        _psych.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HELATH).Current);
+        _health.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.PHYSICAL_HEALTH).Current);
+        _psych.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current);
         _sleep.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.SLEEP_QUALITY).Current);
         _joy.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.JOY).Current);
         _saturation.Init(playerGnilingBrain.Gniling.StatsRepository.GetStat(Stats.SATURATION).Current);
@@ -48,5 +49,9 @@ public class GameSceneInstaller : MonoInstaller
     private void GameOverSetup()
     {
         _gameOverHolder.Init();
+    }
+    private void PauseSetup()
+    {
+        _pauseHolder.Init();
     }
 }

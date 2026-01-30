@@ -10,7 +10,6 @@ public class GlobalInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        Container.Bind<InputHandler>().AsSingle();
-        Debug.Log("Global bind");
+        Container.BindInterfacesAndSelfTo<InputHandler>().AsSingle();
     }
 }

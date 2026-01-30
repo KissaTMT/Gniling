@@ -35,6 +35,6 @@ public class Ghost : MonoBehaviour
     }
     public void Attack(Gniling gniling)
     {
-        gniling.StatsRepository.GetStat(Stats.PHYSICAL_HELATH).Reduce(0.1f * Time.deltaTime);
+        gniling.StatsRepository.GetStat(Stats.PHYSICAL_HEALTH).Reduce(0.1f * Time.deltaTime);
     }
 }
