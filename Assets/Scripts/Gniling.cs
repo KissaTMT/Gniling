@@ -13,6 +13,7 @@ public class Gniling : MonoBehaviour
     public event Action OnSleep;
     public event Action OnRise;
     public event Action OnDeath;
+    public event Action<Vector2> OnPointReset;
 
     [SerializeField] private float _movementSpeed = 5;
     [SerializeField] private float _impulseForce = 5; 
@@ -22,11 +23,11 @@ public class Gniling : MonoBehaviour
     private Animator _animator;
 
     private Vector3 _movementDirection;
+    private float _currentMovementSpeed;
+    private bool _inWater;
 
     private StatsRepository _statsRepository;
-
-    private Coroutine _death;
-    private Coroutine _mad;
+    private GnilingStatsHandler _statsHandler;
     public void Init()
     {
         _transform = GetComponent<Transform>();
@@ -43,83 +44,59 @@ public class Gniling : MonoBehaviour
 
         _statsRepository.GetStat(Stats.PHYSICAL_HEALTH).Current.OnChanged += HealthChangeHandler;
 
-        SetupStatsInfluence();
+        _statsHandler = new GnilingStatsHandler(this);
     }
 
     
     public void Tick()
     {
-        GetSad(0.004f);
+        _statsHandler.GetSad(0.004f);
 
         _animator.SetBool("IS_MOVE", _movementDirection.sqrMagnitude > 0.1f);
 
         if (_movementDirection == Vector3.zero) return;
 
-        Move();
+        if (_inWater)
+        {
+            _currentMovementSpeed = _movementSpeed / 2;
+            _statsHandler.GetSad(0.02f);
+            _statsHandler.GetHungry(0.01f);
+            _statsHandler.GetTired(0.01f);
+        }
+        else _currentMovementSpeed = _movementSpeed;
+
+            Move();
         Flip(_movementDirection.x);
 
-        GetHungry(0.005f);
-        GetTired(0.005f);
+        _statsHandler.GetHungry(0.005f);
+        _statsHandler.GetTired(0.005f);
     }
     public void SetMovementDirection(Vector3 direction)
     {
         _movementDirection = direction;
     }
-    private void SetupStatsInfluence()
-    {
-        _statsRepository.GetStat(Stats.SATURATION).Current.OnChanged += SaturationInfluence;
-
-        _statsRepository.GetStat(Stats.JOY).Current.OnChanged += JoynInfluence;
-
-        _statsRepository.GetStat(Stats.SLEEP_QUALITY).Current.OnChanged += SleepInfluence;
-    }
+    
     
     private void HealthChangeHandler(float oldVal, float newVal)
     {
         if (newVal == 0)
         {
             OnDeath?.Invoke();
+            OnPointReset?.Invoke(_transform.position);
             _movementDirection = Vector2.zero;
-            _movementSpeed = 0;
+            _currentMovementSpeed = 0;
         }
     }
 
     private void Move()
     {
-        _transform.position += _movementDirection * _movementSpeed * Time.deltaTime;
+        _transform.position += _movementDirection * _currentMovementSpeed * Time.deltaTime;
     }
     private void Flip(float sign)
     {
         _root.localScale = new Vector3(Mathf.Sign(sign) * Mathf.Abs(_root.localScale.x), _root.localScale.y, _root.localScale.z);
     }
-    private void GetHungry(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.SATURATION).Reduce(value * Time.deltaTime);
-    }
-    private void GetJoy(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.JOY).Add(value * Time.deltaTime);
-    }
-    private void GetTired(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.SLEEP_QUALITY).Reduce(value * Time.deltaTime);
-    }
-    private void GetSad(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.JOY).Reduce(value * Time.deltaTime);
-    }
-    private void GetRest(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.SLEEP_QUALITY).Add(value * Time.deltaTime);
-    }
-    private void GetDeath(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.PHYSICAL_HEALTH).Reduce(value * Time.deltaTime);
-    }
-    private void GetMad(float value = 0.001f)
-    {
-        _statsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Reduce(value * Time.deltaTime);
-    }
+    
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.TryGetComponent(out MushroomDrop mushroom))
@@ -141,6 +118,7 @@ public class Gniling : MonoBehaviour
             Destroy(collision.gameObject);
         }
         if(collision.TryGetComponent(out Willson willson)){
+            OnPointReset?.Invoke(_transform.position);
             var impulse = (_movementDirection != Vector3.zero) ? _movementDirection : new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f));
             willson.SetImpulse(impulse.normalized * _impulseForce);
             _statsRepository.GetStat(Stats.JOY).Add(0.025f);
@@ -150,54 +128,20 @@ public class Gniling : MonoBehaviour
             OnSleep?.Invoke();
             StartCoroutine(SleepRoutine());
         }
-        if(collision.TryGetComponent(out Water water))
-        {
-            _movementSpeed /= 2;
-        }
+        if (collision.TryGetComponent(out Water water)) _inWater = true;
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Water water))
-        {
-            _movementSpeed *= 2;
-        }
+        if (collision.TryGetComponent(out Water water)) _inWater = false;
     }
-    private IEnumerator GetDeathRoutine()
-    {
-        var sr = _statsRepository;
-        while (true)
-        {
-            var power = 0.004f + 0.0015f * (sr.IsOutOfRange(Stats.SLEEP_QUALITY) + sr.IsOutOfRange(Stats.SATURATION));
-            GetDeath(power);
-            yield return null;
-        }
-    }
-    private IEnumerator GetMadRoutine()
-    {
-        var sr = _statsRepository;
-        Debug.Log("mr_in");
-        while (true)
-        {
-            var power = 0.004f + 0.0015f * (sr.IsOutOfRange(Stats.SLEEP_QUALITY) + sr.IsOutOfRange(Stats.JOY));
-            GetMad(power);
-            yield return null;
-        }
-    }
-    private IEnumerator GetChangeRoutine(Stat stat, float value)
-    {
-        while (true)
-        {
-            stat.Change(value * Time.deltaTime);
-            yield return null;
-        }
-    }
+    
     private IEnumerator SleepRoutine()
     {
         var stat =_statsRepository.GetStat(Stats.SLEEP_QUALITY);
         var isClamping = stat.Current.Value < 0.9f;
         for(var i = 0f; i < 1; i += Time.deltaTime)
         {
-            GetRest(0.25f);
+            _statsHandler.GetRest(0.25f);
             yield return null;
             if(isClamping && stat.Current.Value > 1)
             {
@@ -210,84 +154,10 @@ public class Gniling : MonoBehaviour
 
         OnRise?.Invoke();
     }
-    private void SaturationInfluence(float oldValue, float newValue)
-    {
-        var diff = newValue - oldValue;
-
-        if (_statsRepository.IsOutOfRange(Stats.SATURATION) == 1)
-        {
-            if (_death == null) _death = StartCoroutine(GetDeathRoutine());
-            return;
-        }
-        else
-        {
-            if (_death != null)
-            {
-                StopCoroutine(_death);
-                _death = null;
-            }
-        }
-
-        _statsRepository.GetStat(Stats.PHYSICAL_HEALTH).Change(diff / 2);
-    }
-    private void JoynInfluence(float oldValue, float newValue)
-    {
-        var diff = newValue - oldValue;
-
-        if (_statsRepository.IsOutOfRange(Stats.JOY) == 1)
-        {
-            if (_mad == null) _mad = StartCoroutine(GetMadRoutine());
-            return;
-        }
-        else
-        {
-            if (_mad != null)
-            {
-                StopCoroutine(_mad);
-                _mad = null;
-            }
-        }
-        _statsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Change(diff / 2);
-    }
-    private void SleepInfluence(float oldValue, float newValue)
-    {
-        var diff = newValue - oldValue;
-
-        if (_statsRepository.IsOutOfRange(Stats.SLEEP_QUALITY) == 1)
-        {
-            if (_death == null) _death = StartCoroutine(GetDeathRoutine());
-            if (_mad == null)
-            {
-                _mad = StartCoroutine(GetMadRoutine());
-                Debug.Log($"mr_start {_mad}");
-            }
-            return;
-        }
-        else
-        {
-            if (_death != null)
-            {
-                StopCoroutine(_death);
-                _death = null;
-            }
-            if (_mad != null)
-            {
-                StopCoroutine(_mad);
-                _mad = null;
-                Debug.Log($"mr_end {_mad}");
-            }
-        }
-        _statsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Change(diff / 2);
-        _statsRepository.GetStat(Stats.PHYSICAL_HEALTH).Change(diff / 2);
-    }
+    
     private void OnDisable()
     {
-        _statsRepository.GetStat(Stats.SATURATION).Current.OnChanged -= SaturationInfluence;
-
-        _statsRepository.GetStat(Stats.JOY).Current.OnChanged -= JoynInfluence;
-
-        _statsRepository.GetStat(Stats.SLEEP_QUALITY).Current.OnChanged -= SleepInfluence;
-
         _statsRepository.GetStat(Stats.PHYSICAL_HEALTH).Current.OnChanged -= HealthChangeHandler;
+        _statsHandler.Dispose();
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Zenject;
 
 public class PlayerGnilingBrian : MonoBehaviour
@@ -23,11 +24,19 @@ public class PlayerGnilingBrian : MonoBehaviour
     {
         _gniling = GetComponent<Gniling>();
         _gniling.Init();
+        _gniling.OnPointReset += PointReset;
         _main = Camera.main;
     }
+
+    private void PointReset(Vector2 point)
+    {
+        _currentPoint = point;
+    }
+
     private void OnDisable()
     {
         _input.OnGetScreenPosition -= SetCurrentPoint;
+        _gniling.OnPointReset -= PointReset;
     }
     private void SetCurrentPoint(Vector2 point)
     {

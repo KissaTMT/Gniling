@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Mushroom : MonoBehaviour
@@ -12,7 +11,7 @@ public class Mushroom : MonoBehaviour
     }
     public void Drop()
     {
-        Instantiate(_drop, _transform.position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 0.5f)), Quaternion.identity).Init();
+        Instantiate(_drop, _transform.position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, -0.5f)), Quaternion.identity).Init();
     }
     public float GetDropProbability() => (0.6f + (int) _drop.EffectType * 0.1f);
     private void Awake()
@@ -27,12 +26,12 @@ public class Mushroom : MonoBehaviour
             if (Random.value > GetDropProbability()) Drop();
         }
     }
-    private IEnumerator PumpRoutine()
+    private IEnumerator PumpRoutine(float offset = 0.1f, float speed = 4)
     {
         var ls = _transform.localScale;
-        for (var i = 0f; i < Mathf.PI; i += 4 * Time.deltaTime)
+        for (var i = 0f; i < Mathf.PI; i += speed * Time.deltaTime)
         {
-            _transform.localScale = new Vector3(ls.x, ls.y - 0.1f * Mathf.Sin(i), ls.z);
+            _transform.localScale = new Vector3(ls.x, ls.y - offset * Mathf.Sin(i), ls.z);
             yield return null;
         }
         _transform.localScale = ls;
