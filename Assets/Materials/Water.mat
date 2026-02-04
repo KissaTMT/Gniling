@@ -19,7 +19,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _CausticHighlightColour
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -28,11 +28,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CausticTexture:
-        m_Texture: {fileID: 2800000, guid: cf4b96f627dc5c54390eaeb877e61e08, type: 3}
+        m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FoamTexture:
-        m_Texture: {fileID: 2800000, guid: cf4b96f627dc5c54390eaeb877e61e08, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
@@ -40,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: cf4b96f627dc5c54390eaeb877e61e08, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -65,10 +65,10 @@ Material:
     - _CausticSpeed: 0.8
     - _CausticSquashAmount: 8
     - _CurrentWorldTextureScale: 0.005681818
-    - _FoamBlurAmount: 1
+    - _FoamBlurAmount: 0
     - _FoamScale: 0.1
     - _SpecularScale: 0.5
-    - _SpecularScale2: 3.68
+    - _SpecularScale2: 1
     - _SpecularSpeed: 0.3
     - _SpecularThreshold: -1
     m_Colors:
@@ -78,7 +78,7 @@ Material:
     - _CurrentWorldTexturePos: {r: 0, g: 0, b: 0, a: 0}
     - _FoamColour: {r: 1, g: 1, b: 1, a: 1}
     - _FoamTexelSize: {r: 0.005, g: 0.005, b: 0, a: 0}
-    - _MainColour: {r: 0.25948048, g: 0, b: 1, a: 1}
+    - _MainColour: {r: 0.069345124, g: 0, b: 0.2679245, a: 1}
     - _SpecularColour: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

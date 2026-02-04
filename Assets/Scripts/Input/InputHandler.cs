@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Zenject;
 
-public class InputHandler : IDisposable, ITickable
+public class InputHandler : IDisposable
 {
     public event Action<Vector2> OnGetScreenPosition;
 
@@ -25,15 +25,9 @@ public class InputHandler : IDisposable, ITickable
         _inputActions.Disable();
         _inputActions.Dispose();
     }
-    public void Tick()
-    {
-        _reset = EventSystem.current.IsPointerOverGameObject();
-    }
     private void PointPositionHandler(InputAction.CallbackContext context)
     {
         var point = _inputActions.Player.Position.ReadValue<Vector2>();
-
-        //if (_reset) return;
 
         OnGetScreenPosition?.Invoke(point);
     }

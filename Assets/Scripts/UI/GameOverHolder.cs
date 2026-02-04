@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using YG;
 using Zenject;
 
 public class GameOverHolder : MonoBehaviour
@@ -31,9 +33,15 @@ public class GameOverHolder : MonoBehaviour
         _panel.gameObject.SetActive(true);
         _loadMenuSceneAsync = SceneManager.LoadSceneAsync(0);
         _loadMenuSceneAsync.allowSceneActivation = false;
+        StartCoroutine(WaitForAdsRoutine());
     }
     private void OnDisable()
     {
         _gniling.OnDeath -= ShowGameOverPanel;
+    }
+    private IEnumerator WaitForAdsRoutine()
+    {
+        yield return new WaitForSeconds(2);
+        YG2.InterstitialAdvShow();
     }
 }

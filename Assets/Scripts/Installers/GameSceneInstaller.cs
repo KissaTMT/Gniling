@@ -44,7 +44,7 @@ public class GameSceneInstaller : MonoInstaller
     }
     private void SpawnerSetup()
     {
-        _spawner.SpawnWillson();
+        _spawner.Init();
     }
     private void GameOverSetup()
     {

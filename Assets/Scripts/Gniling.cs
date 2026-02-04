@@ -25,6 +25,7 @@ public class Gniling : MonoBehaviour
     private Vector3 _movementDirection;
     private float _currentMovementSpeed;
     private bool _inWater;
+    private bool _inDream;
 
     private StatsRepository _statsRepository;
     private GnilingStatsHandler _statsHandler;
@@ -64,6 +65,9 @@ public class Gniling : MonoBehaviour
             _statsHandler.GetTired(0.01f);
         }
         else _currentMovementSpeed = _movementSpeed;
+
+        if (_inDream) _currentMovementSpeed = 0;
+        
 
             Move();
         Flip(_movementDirection.x);
@@ -123,7 +127,7 @@ public class Gniling : MonoBehaviour
             willson.SetImpulse(impulse.normalized * _impulseForce);
             _statsRepository.GetStat(Stats.JOY).Add(0.025f);
         }
-        if(collision.TryGetComponent(out Bed bed))
+        if(collision.TryGetComponent(out Bed bed) && bed.IsReadyToSleep)
         {
             OnSleep?.Invoke();
             StartCoroutine(SleepRoutine());
@@ -139,7 +143,8 @@ public class Gniling : MonoBehaviour
     {
         var stat =_statsRepository.GetStat(Stats.SLEEP_QUALITY);
         var isClamping = stat.Current.Value < 0.9f;
-        for(var i = 0f; i < 1; i += Time.deltaTime)
+        //_inDream = true;
+        for (var i = 0f; i < 1; i += Time.deltaTime)
         {
             _statsHandler.GetRest(0.25f);
             yield return null;
@@ -153,6 +158,7 @@ public class Gniling : MonoBehaviour
         yield return new WaitForSeconds(2);
 
         OnRise?.Invoke();
+        _inDream = false;
     }
     
     private void OnDisable()
