@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using Zenject;
 
@@ -14,17 +15,25 @@ public class PlayerGnilingBrian : MonoBehaviour
 
     private Camera _main;
 
+
     [Inject]
     public void Construct(InputHandler input)
     {
         _input = input;
-        _input.OnGetScreenPosition += SetCurrentPoint;
+        
     }
     public void Init()
     {
+        _input.Reset();
+
         _gniling = GetComponent<Gniling>();
         _gniling.Init();
+
+        PointReset(_gniling.Transform.position);
+
+        _input.OnGetScreenPosition += SetCurrentPoint;
         _gniling.OnPointReset += PointReset;
+
         _main = Camera.main;
     }
 

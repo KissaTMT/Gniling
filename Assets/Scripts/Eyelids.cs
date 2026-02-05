@@ -9,28 +9,45 @@ public class Eyelids : MonoBehaviour
 
     [SerializeField] private float _speed;
 
+    private PlayerGnilingBrian _player;
     private Gniling _gniling;
 
     [Inject]
     public void Construct(PlayerGnilingBrian player)
     {
-        _gniling = player.Gniling;
-
-        _gniling.OnSleep += Close;
-        _gniling.OnRise += Open;
+        _player = player;
     }
-    public void Open()
+    public void Init()
+    {
+        _gniling = _player.Gniling;
+        _gniling.OnSleep += CloseProccess;
+        _gniling.OnRise += OpenProccess;
+
+        Close();
+        OpenProccess();
+    }
+    public void OpenProccess()
     {
         StartCoroutine(Proccess(_top.position.y + _top.localScale.y, _bottom.position.y - _bottom.localScale.y));
     }
-    public void Close()
+    public void CloseProccess()
     {
         StartCoroutine(Proccess(_top.position.y - _top.localScale.y, _bottom.position.y + _bottom.localScale.y));
     }
+    private void Open()
+    {
+        _top.position = new Vector2(0,_top.position.y + _top.localScale.y);
+        _bottom.position = new Vector2(0, _bottom.position.y - _bottom.localScale.y);
+    }
+    private void Close()
+    {
+        _top.position = new Vector2(0, _top.position.y - _top.localScale.y);
+        _bottom.position = new Vector2(0, _bottom.position.y + _bottom.localScale.y);
+    }
     private void OnDisable()
     {
-        _gniling.OnSleep -= Close;
-        _gniling.OnRise -= Open;
+        _gniling.OnSleep -= CloseProccess;
+        _gniling.OnRise -= OpenProccess;
     }
     private IEnumerator Proccess(float topTargetY, float bottomTargetY)
     {

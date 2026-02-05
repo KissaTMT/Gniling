@@ -9,11 +9,12 @@ public class Bed : MonoBehaviour
     private Vector3 _initLocalScale;
     private Coroutine _popPup;
     private bool _isGetUp;
-    private bool _isReset = true;
+    private bool _isReset;
     public void Init()
     {
         _transform = GetComponent<Transform>();
         _initLocalScale = transform.localScale;
+        StartCoroutine(PopPupRoutine());
     }
     private void Awake()
     {

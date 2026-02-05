@@ -69,7 +69,7 @@ public class Gniling : MonoBehaviour
         if (_inDream) _currentMovementSpeed = 0;
         
 
-            Move();
+        Move();
         Flip(_movementDirection.x);
 
         _statsHandler.GetHungry(0.005f);

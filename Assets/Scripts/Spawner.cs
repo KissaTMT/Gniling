@@ -10,6 +10,7 @@ public class Spawner : MonoBehaviour
 
     private List<Mushroom> _mushrooms = new();
 
+    private PlayerGnilingBrian _player;
     private Gniling _gniling;
     private Ghost _ghost;
     private Willson _willson;
@@ -19,14 +20,14 @@ public class Spawner : MonoBehaviour
     [Inject]
     public void Construct(PlayerGnilingBrian player, DiContainer di)
     {
-        _gniling = player.Gniling;
+        _player = player;
         _di = di;
-
-        _gniling.OnRise += OnRiseHandler;
-        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current.OnChanged += SpawnGhostHanlder;
     }
     public void Init()
     {
+        _gniling = _player.Gniling;
+        _gniling.OnRise += OnRiseHandler;
+        _gniling.StatsRepository.GetStat(Stats.PSYCHICAL_HEALTH).Current.OnChanged += SpawnGhostHanlder;
         SpawnMushrooms();
         SpawnWillson();
     }
@@ -44,14 +45,14 @@ public class Spawner : MonoBehaviour
     }
     private Willson SpawnWillson()
     {
-        _willson = Instantiate(_willsonPrefab, Vector2.right * 2, Quaternion.identity);
+        _willson = Instantiate(_willsonPrefab, Vector2.zero, Quaternion.identity);
         _willson.Init();
         return _willson;
     }
 
     private void SpawnMushrooms()
     {
-        var count = Random.Range(3,10);
+        var count = Random.Range(3,9);
         for (var a = 0f; a < Mathf.PI * 2; a += (Mathf.PI * 2 / count))
         {
             var position = new Vector2(13 * Mathf.Cos(a) - 1, 6 * Mathf.Sin(a) - 1);
@@ -72,7 +73,7 @@ public class Spawner : MonoBehaviour
     private void OnRiseHandler()
     {
         WaterDrop();
-        _willson.Transform.position = Vector2.right * 2;
+        _willson.Transform.position = Vector2.zero;
     }
     private void WaterDrop()
     {

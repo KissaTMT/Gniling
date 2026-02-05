@@ -9,8 +9,6 @@ public class InputHandler : IDisposable
     public event Action<Vector2> OnGetScreenPosition;
 
     private InputSystem_Actions _inputActions;
-
-    private bool _reset;
     public InputHandler()
     {
         _inputActions = new InputSystem_Actions();
@@ -25,6 +23,11 @@ public class InputHandler : IDisposable
         _inputActions.Disable();
         _inputActions.Dispose();
     }
+    public void Reset()
+    {
+        _inputActions.Disable();
+        _inputActions.Enable();
+    }
     private void PointPositionHandler(InputAction.CallbackContext context)
     {
         var point = _inputActions.Player.Position.ReadValue<Vector2>();
@@ -35,8 +38,7 @@ public class InputHandler : IDisposable
     {
         if (!hasFocus) return;
 
-        _inputActions.Disable();
-        _inputActions.Enable();
+        Reset();
     }
 
 }
