@@ -12,7 +12,7 @@ public class GameSceneInstaller : MonoInstaller
 
     private PlayerGnilingBrian PlayerBinding()
     {
-        var gniling = Container.InstantiatePrefab(_gnilingPrefab,new Vector3(13,-7,-7),Quaternion.identity,null);
+        var gniling = Container.InstantiatePrefab(_gnilingPrefab,new Vector3(12,-5,-5),Quaternion.identity,null);
         var playerGnilingBrain = Container.InstantiateComponent<PlayerGnilingBrian>(gniling);
         playerGnilingBrain.name = "Player";
         Container.Bind<PlayerGnilingBrian>().FromInstance(playerGnilingBrain).AsSingle();

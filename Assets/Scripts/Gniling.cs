@@ -26,6 +26,7 @@ public class Gniling : MonoBehaviour
     private float _currentMovementSpeed;
     private bool _inWater;
     private bool _inDream;
+    private bool _isDeath;
 
     private StatsRepository _statsRepository;
     private GnilingStatsHandler _statsHandler;
@@ -51,6 +52,8 @@ public class Gniling : MonoBehaviour
     
     public void Tick()
     {
+        if (_isDeath) return;
+
         _statsHandler.GetSad(0.004f);
 
         _animator.SetBool("IS_MOVE", _movementDirection.sqrMagnitude > 0.1f);
@@ -85,10 +88,9 @@ public class Gniling : MonoBehaviour
     {
         if (newVal == 0)
         {
+            _isDeath = true;
             OnDeath?.Invoke();
             OnPointReset?.Invoke(_transform.position);
-            _movementDirection = Vector2.zero;
-            _currentMovementSpeed = 0;
         }
     }
 
@@ -132,11 +134,11 @@ public class Gniling : MonoBehaviour
             OnSleep?.Invoke();
             StartCoroutine(SleepRoutine());
         }
-        if (collision.TryGetComponent(out Water water)) _inWater = true;
+        if (collision.GetComponentInParent<Water>()) _inWater = true;
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Water water)) _inWater = false;
+        if (collision.GetComponentInParent<Water>()) _inWater = false;
     }
     
     private IEnumerator SleepRoutine()

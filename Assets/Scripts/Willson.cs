@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Willson : MonoBehaviour
 {
+    private const string GROUND = "Ground";
     public Transform Transform => _transform;
     private Transform _transform;
     private Transform _root;
@@ -51,14 +52,11 @@ public class Willson : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Water water))
+        if (collision.GetComponentInParent<Water>())
         {
-            _return = StartCoroutine(ReturnRoutine(Vector3.down));
+            if(_return == null)_return = StartCoroutine(ReturnRoutine(-2 * _currentDirection));
         }
-    }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out Water water))
+        if (collision.tag == GROUND)
         {
             if (_return != null)
             {
@@ -69,17 +67,24 @@ public class Willson : MonoBehaviour
     }
     private IEnumerator ReturnRoutine(Vector3 direction)
     {
-        var initSpeed = 1/_speed;
-        for(var i = 0f; i < 1; i += 0.01f * initSpeed * Time.deltaTime)
+        var slowdown = 1/_speed;
+        var initSpeed = _speed/2;
+        for(var i = 0f; i < 1; i += 0.01f * slowdown * Time.deltaTime)
         {
-            _currentDirection = (_currentDirection + direction * i).normalized;
-            _speed = 1;
+            _currentDirection += direction * i;
+            _speed = initSpeed;
             yield return null;
         }
+        _currentDirection.Normalize();
+        _speed = initSpeed*2;
         while (true)
         {
-            _speed = 6;
-            yield return new WaitForSeconds(2);
+            _speed = initSpeed*2;
+            yield return null;
         }
+    }
+    private void OnDisable()
+    {
+        StopAllCoroutines();
     }
 }

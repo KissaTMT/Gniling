@@ -5,6 +5,7 @@ using Zenject;
 
 public class PlayerGnilingBrian : MonoBehaviour
 {
+    public Transform Transform => Gniling.Transform;
     public Gniling Gniling => _gniling;
 
     private Vector2 _currentPoint;
@@ -59,7 +60,7 @@ public class PlayerGnilingBrian : MonoBehaviour
     }
     private Vector2 CalculateDirection()
     {
-        var delta = _currentPoint - (Vector2)_gniling.Transform.position;
+        var delta = _currentPoint - (Vector2)Transform.position;
         return delta.sqrMagnitude > 1 ? delta.normalized : delta;
     }
 }

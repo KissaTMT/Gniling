@@ -10,6 +10,7 @@ public class Menu : MonoBehaviour
     private void Awake()
     {
         Application.targetFrameRate = 120;
+        QualitySettings.vSyncCount = 1;
     }
     private void Start()
     {
